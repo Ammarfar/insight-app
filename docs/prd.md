@@ -10,11 +10,13 @@ Instead, it should create a continuous learning loop:
 
 **Consume → Capture Insight → Connect → Revisit → Re-absorb → Grow**
 
+The user's learning data should remain portable and owned by the user.
+
 ---
 
 # 2. Problem
 
-People consume a large amount of useful information from:
+People consume useful information from:
 
 * Books
 * Videos
@@ -22,11 +24,12 @@ People consume a large amount of useful information from:
 * Podcasts
 * Courses
 * Conversations
+* Work
 * Personal experiences
 
-However, most of that knowledge is eventually forgotten.
+However, much of that knowledge is eventually forgotten.
 
-Traditional note-taking applications solve the **storage problem**, but not necessarily the **retention problem**.
+Traditional note-taking applications mainly solve the storage problem.
 
 Notes are often:
 
@@ -34,15 +37,13 @@ Notes are often:
 * Stored without meaningful relationships to other knowledge.
 * Difficult to rediscover later.
 * Disconnected from the user's broader learning journey.
-* Unable to show whether the user is actually growing.
+* Unable to show whether the user is actually learning or retaining information.
 
-The product should solve this by turning individual learning moments into **interconnected and repeatedly reinforced insights**.
+The platform should turn learning moments into interconnected, repeatedly reinforced Insights.
 
 ---
 
 # 3. Core Knowledge Unit
-
-The primary unit of knowledge is an:
 
 ## Insight
 
@@ -56,36 +57,43 @@ Examples:
 
 > Database indexes improve read performance but introduce additional write cost.
 
-An Insight should ideally represent **one clear idea**.
+An Insight should ideally represent one clear idea.
 
-A single source may produce multiple Insights.
+One Source may produce multiple Insights.
 
 Example:
 
-**Source**
+**Atomic Habits**
 
-Atomic Habits
-
-↓
-
-**Insights**
-
-* Environment influences behavior.
-* Reduce friction for good habits.
-* Identity reinforces habits.
-* Small improvements compound over time.
+→ Environment influences behavior.
+→ Reduce friction for good habits.
+→ Identity reinforces habits.
+→ Small improvements compound over time.
 
 ---
 
 # 4. Core Entities
 
-For the first version, keep the knowledge model intentionally small.
+## User
+
+Represents the owner of the knowledge base.
+
+A User owns:
+
+* Insights
+* Sources
+* Topics
+* Reviews
+* Learning progress
+* Backup configuration
+
+---
 
 ## Insight
 
-The main learning object.
+The primary knowledge entity.
 
-Possible attributes:
+Attributes:
 
 * Title
 * Content
@@ -93,14 +101,19 @@ Possible attributes:
 * Topics
 * Related Insights
 * Created date
-* Last reviewed date
-* Review count
+* Updated date
+
+An Insight can:
+
+* Belong to multiple Topics.
+* Connect to multiple other Insights.
+* Be reviewed multiple times.
 
 ---
 
 ## Source
 
-Where the Insight came from.
+Represents where an Insight originated.
 
 Examples:
 
@@ -109,190 +122,277 @@ Examples:
 * Article
 * Podcast
 * Course
+* Conversation
 * Personal experience
 
-Example:
+Possible attributes:
 
-**Atomic Habits — James Clear**
+* Type
+* Title
+* Author / creator
+* URL
+* Additional metadata
 
-can produce multiple Insights.
+One Source can produce many Insights.
 
 ---
 
 ## Topic
 
-A broad subject used to organize Insights.
+Represents an area of knowledge.
 
 Examples:
 
 * Psychology
-* Investing
 * Backend Engineering
+* Finance
 * Productivity
 * Communication
-* Personal Finance
+* Personal Growth
 
 An Insight can belong to multiple Topics.
 
-Example:
-
-**"Environment influences behavior."**
-
-Topics:
-
-`Psychology`
-
-`Habit Formation`
-
-`Personal Development`
+A Topic can contain multiple Insights.
 
 ---
 
 ## Insight Connection
 
-A relationship between two Insights.
+Represents a relationship between two Insights.
 
-For V1, the relationship does not need complicated semantic types.
+For V1, only one relationship is required:
 
-It can simply mean:
+**Related**
 
-**Related to**
+More specific relationship types may be added later.
 
 Example:
 
-`Environment influences behavior`
+**Environment influences behavior**
 
 ↔
 
-`Reduce friction for good habits`
-
-More advanced relationship types can come later.
+**Reduce friction for good habits**
 
 ---
 
-# 5. Core Product Principles
+## Insight Review
+
+Represents each time an Insight is revisited.
+
+Possible attributes:
+
+* Insight
+* Review date
+* Review result
+
+Initial review result options:
+
+* Remembered
+* Needs Review
+
+A review history allows the platform to understand whether knowledge is being revisited instead of simply stored.
+
+---
+
+## XP Event
+
+Represents an activity that contributes to learning progress.
+
+Examples:
+
+* Insight created
+* Insight reviewed
+* Insight connected
+* Daily review completed
+
+XP should be event-based rather than only stored as one mutable total.
+
+Examples:
+
+`CREATE_INSIGHT +5`
+
+`REVIEW_INSIGHT +5`
+
+`CONNECT_INSIGHT +3`
+
+`COMPLETE_DAILY_REVIEW +10`
+
+The user's total XP can be derived or cached from these events.
+
+---
+
+## User Progress
+
+Represents the user's current learning progression.
+
+Possible attributes:
+
+* Current XP
+* Level
+* Current streak
+* Longest streak
+* Last active learning date
+
+This data may be cached for faster reading while XP Events remain the historical source of truth.
+
+---
+
+## Backup
+
+Represents application-level backup metadata.
+
+Possible attributes:
+
+* User
+* Google Drive file identifier
+* Backup version
+* Backup type
+* Created date
+* Status
+
+Backup types:
+
+* Manual
+* Automatic
+
+The backup file contains semantic user data, not infrastructure credentials.
+
+---
+
+# 5. Product Principles
 
 ## 5.1 Capture Should Be Easy
 
-Writing an Insight should require minimal friction.
+Adding an Insight should require minimal friction.
 
-The user should be able to record an Insight quickly while:
+The user should be able to quickly record knowledge while:
 
-* Reading a book.
-* Watching a video.
-* Learning something at work.
-* Having a random realization.
+* Reading.
+* Watching something.
+* Working.
+* Learning.
+* Thinking.
 
-The system should not require excessive metadata before saving.
+The application should not require excessive organization before saving.
 
-Capture first.
-
-Organize later if necessary.
+**Capture first. Organize later.**
 
 ---
 
 ## 5.2 Insights Should Not Become Dead Notes
 
-The system should actively bring old Insights back to the user.
+The application must actively resurface previous Insights.
 
-Knowledge should periodically resurface instead of disappearing into an archive.
+Knowledge should periodically return to the user instead of disappearing into an archive.
 
 ---
 
 ## 5.3 Connections Matter
 
-Learning becomes more valuable when new knowledge connects with previous knowledge.
+New knowledge becomes more useful when it connects with previous knowledge.
 
-The system should make it easy to discover:
+The platform should help users recognize:
 
-> "I learned something similar before."
+> I learned something similar before.
 
 or:
 
-> "This concept connects with something from another topic."
+> This concept connects with something I learned somewhere else.
 
 ---
 
 ## 5.4 Progress Should Represent Learning
 
-Gamification should reward meaningful learning behavior rather than meaningless activity.
+Gamification should reward meaningful learning behavior.
 
-Avoid rewarding users simply for producing large quantities of notes.
+Progress should not primarily reward note volume.
 
-Progress should primarily come from actions such as:
+The platform should reward:
 
 * Capturing meaningful Insights.
-* Reviewing existing Insights.
-* Recalling knowledge.
-* Creating useful connections.
-* Returning consistently to learning.
+* Reviewing Insights.
+* Creating knowledge connections.
+* Returning consistently.
+* Completing learning sessions.
 
 ---
 
 ## 5.5 Keep the System Lightweight
 
-The product should not require users to become librarians of their own knowledge.
+The user should not become a librarian of their own knowledge.
 
-Organization should support learning, not become another task.
+Organization should support learning instead of becoming another task.
+
+---
+
+## 5.6 Your Knowledge Belongs to You
+
+Users should retain ownership and portability of their learning data.
+
+The platform must support:
+
+* Export.
+* Google Drive backup.
+* Google Drive restore.
+
+Google Drive is used as a backup and portability layer rather than the primary application database.
 
 ---
 
 # 6. Core Learning Loop
 
-The primary user loop should be:
-
 ## Step 1 — Consume
 
-The user learns something from a source.
+The user learns something.
 
 ↓
 
 ## Step 2 — Capture
 
-The user records one or more Insights.
+The user records an Insight.
 
 ↓
 
 ## Step 3 — Connect
 
-The user associates the Insight with:
+The Insight may be associated with:
 
+* Source
 * Topics
-* Existing Insights
+* Related Insights
 
 ↓
 
 ## Step 4 — Revisit
 
-The system periodically resurfaces existing Insights.
+The platform resurfaces previous Insights.
 
 ↓
 
 ## Step 5 — Re-absorb
 
-The user reads, recalls, or reflects on the Insight again.
+The user recalls or rereads the Insight.
 
 ↓
 
 ## Step 6 — Progress
 
-The system records learning activity and shows visible progress.
+The platform records the learning activity.
 
 ↓
 
-The user becomes motivated to learn again.
+The user becomes motivated to continue learning.
 
 ---
 
 # 7. MVP Objective
 
-The MVP should answer one question:
+The MVP should answer:
 
-> Can this product help the user remember and reconnect with things they have previously learned?
+> Can this product help users remember and reconnect with things they previously learned?
 
-The MVP does not need to solve every knowledge-management problem.
-
-It only needs to successfully support:
+The MVP learning loop is:
 
 **Capture → Connect → Revisit → Progress**
 
@@ -300,27 +400,29 @@ It only needs to successfully support:
 
 # 8. MVP Features
 
-## Insight Capture
+## 8.1 Insight Capture
 
-User can quickly create an Insight.
+Users can quickly create an Insight.
 
-Basic fields:
+Required:
 
-* Insight
-* Source
-* Topic
+* Insight content
 
 Optional:
 
-* Additional note/context
+* Title
+* Source
+* Topics
+
+Creating an Insight should ideally take less than 20 seconds.
 
 ---
 
-## Insight Library
+## 8.2 Insight Library
 
-User can browse previously created Insights.
+Users can browse their previous Insights.
 
-Basic capabilities:
+Capabilities:
 
 * Recent Insights
 * Search
@@ -329,186 +431,420 @@ Basic capabilities:
 
 ---
 
-## Related Insights
+## 8.3 Insight Detail
 
-Users can manually connect Insights.
+Displays:
 
-When viewing an Insight:
-
-**Related Insights**
-
-* Insight A
-* Insight B
-* Insight C
+* Insight content
+* Source
+* Topics
+* Related Insights
+* Review history
+* Last reviewed date
 
 ---
 
-## Daily Review
+## 8.4 Related Insights
 
-The system periodically resurfaces existing Insights.
+Users can manually connect an Insight with another Insight.
+
+For MVP:
+
+**Insight A ↔ Insight B**
+
+Connections are bidirectional from the user's perspective.
+
+---
+
+## 8.5 Daily Review
+
+The platform resurfaces a small number of Insights.
 
 Example:
 
 ### Today's Review
 
-5 Insights to revisit.
+5 Insights waiting.
 
-The user can:
+Users can:
 
-* Review the Insight.
-* Skip it.
-* Mark it as remembered.
+* Review
+* Skip
+* Mark as remembered
+* Mark as needing another review
 
-The first version does not need a complicated spaced-repetition algorithm.
+The MVP does not require advanced spaced repetition.
 
-A simple resurfacing mechanism is enough.
-
----
-
-## Learning Progress
-
-A lightweight progress system.
-
-For example:
-
-**Level 4**
-
-`420 XP`
-
-This week:
-
-* 8 Insights captured
-* 12 Insights reviewed
-* 3 Connections created
+A simple review scheduling mechanism is sufficient.
 
 ---
 
-# 9. Simple Gamification
+## 8.6 Topics
 
-For V1, limit gamification to three concepts.
+Users can browse their knowledge by Topic.
+
+Each Topic can display:
+
+* Number of Insights
+* Recently learned Insights
+* Recently reviewed Insights
+
+Topic-level progression can be added later.
+
+---
+
+## 8.7 Learning Progress
+
+Display:
+
+* Level
+* XP
+* Learning streak
+* Insights reviewed this week
+* Insights created this week
+
+Avoid excessive analytics for MVP.
+
+---
+
+# 9. Gamification
+
+V1 should only contain:
 
 ## XP
 
-Represents learning activity.
+Example rewards:
 
-Example:
+* Create Insight: +5 XP
+* Review Insight: +5 XP
+* Connect Insights: +3 XP
+* Complete Daily Review: +10 XP
 
-Capture Insight
-`+5 XP`
-
-Review Insight
-`+5 XP`
-
-Connect Insights
-`+3 XP`
-
-Complete Daily Review
-`+10 XP`
-
-Exact values can be tuned later.
+Exact values are configurable and may change.
 
 ---
 
 ## Level
 
-XP contributes to the user's overall Learning Level.
+XP contributes to a global Learning Level.
 
 Example:
 
-Level 1 → Explorer
+Level 1
+Level 2
+Level 3
+...
 
-Level 2 → Learner
-
-Level 3 → Thinker
-
-Level 4 → Scholar
-
-The names are optional.
-
-The important part is making long-term progress visible.
+Optional names such as Explorer or Scholar may be introduced later.
 
 ---
 
 ## Streak
 
-Track days where meaningful learning activity occurred.
+A learning day counts when a user performs meaningful learning activity.
 
-But streaks should not punish users aggressively.
+Examples:
 
-Missing one day should not make months of progress feel wasted.
+* Creates an Insight.
+* Reviews an Insight.
+* Completes Daily Review.
+
+The streak system should avoid excessively punishing occasional missed days.
 
 ---
 
-# 10. Initial Navigation
+# 10. Data Ownership & Backup
 
-Keep the first navigation small.
+## Primary Database
 
-### Home
+The application uses PostgreSQL as the operational database.
 
-Shows:
+Google Drive is not used as the primary database.
 
-* Current level / XP
-* Daily Review
+---
+
+## Google Drive Integration
+
+Users can connect their Google account and enable backup.
+
+Google Drive is used for:
+
+* Manual backup.
+* Automatic backup.
+* Restore.
+* Data portability.
+
+---
+
+## Backup Format
+
+Backups use an application-level data format.
+
+Example:
+
+```json
+{
+  "version": 1,
+  "createdAt": "2026-09-21T12:00:00Z",
+  "topics": [],
+  "sources": [],
+  "insights": [],
+  "insightConnections": [],
+  "reviews": [],
+  "xpEvents": [],
+  "preferences": {}
+}
+```
+
+Backup formats are versioned.
+
+Future schema changes can be handled using migration logic.
+
+Example:
+
+`Backup V1 → Migration → Current Schema`
+
+---
+
+## Backup Data
+
+Included:
+
+* Insights
+* Sources
+* Topics
+* Insight connections
+* Reviews
+* XP history
+* Relevant user preferences
+
+Excluded:
+
+* Google OAuth token
+* Google refresh token
+* Sessions
+* Internal logs
+* Cache
+* Infrastructure credentials
+
+---
+
+## Manual Backup
+
+Users can trigger:
+
+**Backup Now**
+
+The application creates a backup file and uploads it to Google Drive.
+
+---
+
+## Automatic Backup
+
+For V1, automatic backup may run when:
+
+* User data has changed.
+* The previous backup is older than a configured threshold.
+
+A complex job infrastructure is not required initially.
+
+---
+
+## Restore
+
+Restore flow:
+
+1. Select backup.
+2. Download backup.
+3. Validate format.
+4. Validate version.
+5. Migrate if required.
+6. Start database transaction.
+7. Replace/import user learning data.
+8. Commit.
+9. Roll back completely if restoration fails.
+
+---
+
+# 11. Initial Navigation
+
+## Home
+
+Primary purpose:
+
+**What should I learn/review now?**
+
+Contains:
+
+* Today's Review
+* Level / XP
+* Streak
 * Recent Insights
-* Learning activity
 
-### Insights
+---
+
+## Insights
 
 Knowledge library.
 
-### Topics
+---
 
-Browse Insights grouped by Topic.
+## Topics
 
-### Progress
-
-Shows:
-
-* Level
-* XP
-* Learning activity
-* Review statistics
+Browse knowledge areas.
 
 ---
 
-# 11. Explicitly Out of Scope for MVP
+## Progress
+
+Learning progression and lightweight statistics.
+
+---
+
+## Settings
+
+Contains:
+
+* Profile
+* Google Drive connection
+* Backup
+* Restore
+* Export data
+
+---
+
+# 12. Global Quick Capture
+
+A persistent:
+
+**+ Insight**
+
+action should be accessible throughout the application.
+
+Shortcut example:
+
+`⌘ + K`
+
+Capture should use a modal or lightweight UI rather than requiring navigation to another complex page.
+
+---
+
+# 13. Explicitly Out of Scope for MVP
 
 Do not build yet:
 
-* Complex knowledge graph visualization.
+* Graph visualization.
+* Automatic AI linking.
 * AI-generated Insights.
-* AI automatic linking.
-* Advanced spaced repetition.
+* Complex spaced repetition.
 * Flashcard system.
-* Collaborative notes.
-* Social features.
+* Collaboration.
+* Social profiles.
 * Leaderboards.
-* Public profiles.
+* Public knowledge sharing.
 * Complex achievements.
 * Skill trees.
-* Multiple relationship types.
-* Sophisticated recommendation engines.
-
-These features can be considered later after the core learning loop proves useful.
+* Multiple connection types.
+* Advanced recommendations.
+* Topic XP systems.
+* Native mobile application.
 
 ---
 
-# 12. MVP Success Criteria
+# 14. Proposed Technology Stack
 
-The product is successful if the user consistently experiences moments such as:
+## Application
 
-> "Oh, I remember learning this."
+Next.js
 
-> "I forgot about this Insight, but seeing it again made it useful."
+Use Next.js as both:
 
-> "I didn't realize these two things were connected."
+* Frontend.
+* Server-side application/backend.
 
-> "I can actually see what I've been learning lately."
+A separate backend service is not required for MVP.
+
+---
+
+## Frontend & Design Direction
+
+Styling
+- Tailwind CSS
+
+Component System
+- shadcn/ui
+- Custom domain components built on top of reusable primitives
+
+Icons
+- Lucide
+
+Typography
+- Geist
+
+Forms & Validation
+- React Hook Form
+- Zod
+
+Motion
+- Motion, used sparingly for meaningful interaction feedback
+
+Design Principles
+- Light mode first
+- Calm and minimal
+- Content-first
+- Neutral base palette
+- Pastel semantic accents
+- Generous whitespace
+- Minimal visual noise
+- Consistent reusable components
+- Avoid unnecessary cards and decorative UI
+
+Responsive Strategy
+- Desktop-first
+- Fully usable on tablet and mobile
+
+---
+
+## Database
+
+PostgreSQL
+
+---
+
+## ORM
+
+Drizzle ORM
+
+---
+
+## Authentication
+
+Google OAuth.
+
+---
+
+## Backup
+
+Google Drive API.
+
+---
+
+# 15. MVP Success Criteria
+
+The product should regularly create moments such as:
+
+> I forgot I learned this.
+
+> Seeing this Insight again made it useful.
+
+> I didn't realize these two ideas were connected.
+
+> I can clearly see what I've been learning.
 
 The primary success metric should not be:
 
 **Number of Insights created.**
 
-Instead, the product should eventually optimize for:
+The long-term target should be:
 
-**Knowledge revisited and retained.**
+**Knowledge revisited, connected, and retained.**
