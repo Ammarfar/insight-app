@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790016787366,
+      "tag": "0000_sour_omega_flight",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790017544894,
+      "tag": "0001_goofy_tag",
+      "breakpoints": true
+    }
+  ]
+}

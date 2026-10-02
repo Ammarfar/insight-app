@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "backups_user_pending_uidx" ON "backups" USING btree ("user_id") WHERE "backups"."status" = 'PENDING';
