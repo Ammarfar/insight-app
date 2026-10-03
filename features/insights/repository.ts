@@ -1,8 +1,9 @@
 import "server-only";
-import { and, count, desc, eq, ilike, inArray, ne, or } from "drizzle-orm";
+import { and, count, desc, eq, ilike, inArray, ne, or, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { insightConnections, insightReviews, insights, insightTopics, sources, topics } from "@/db/schema";
 import type { InsightDetail, InsightFilters, InsightSummary } from "./contracts";
+import { buildRotatingQuotes } from "./quote";
 
 async function hydrateInsights(userId: string, ids: string[]): Promise<InsightSummary[]> {
   if (!ids.length) return [];
@@ -53,6 +54,21 @@ export async function listInsights(userId: string, filters: InsightFilters) {
 export async function listRecentInsights(userId: string, limit = 4) {
   const ids = await db.select({ id: insights.id }).from(insights).where(eq(insights.userId, userId)).orderBy(desc(insights.createdAt)).limit(limit);
   return hydrateInsights(userId, ids.map((row) => row.id));
+}
+
+export async function listRotatingQuotes(userId: string) {
+  const rows = await db.select({
+    id: insights.id,
+    content: insights.content,
+    title: insights.title,
+    sourceTitle: sources.title,
+  }).from(insights)
+    .leftJoin(sources, eq(insights.sourceId, sources.id))
+    .where(eq(insights.userId, userId))
+    .orderBy(sql`random()`)
+    .limit(20);
+
+  return buildRotatingQuotes(rows);
 }
 
 export async function getInsightDetail(userId: string, insightId: string): Promise<InsightDetail | null> {

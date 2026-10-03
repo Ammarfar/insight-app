@@ -2,7 +2,8 @@ import { BotanicalArt } from "@/components/botanical-art";
 import { Button } from "@/components/ui/button";
 import { requireUser } from "@/features/auth/service";
 import { OpenCaptureButton } from "@/features/insights/components/open-capture-button";
-import { listRecentInsights } from "@/features/insights/repository";
+import { RotatingInsightQuote } from "@/features/insights/components/rotating-insight-quote";
+import { listRecentInsights, listRotatingQuotes } from "@/features/insights/repository";
 import { getProgress } from "@/features/progress/service";
 import { resolveReviewAction, skipReviewAction } from "@/features/reviews/actions";
 import { getDailyReview } from "@/features/reviews/service";
@@ -12,14 +13,14 @@ import Link from "next/link";
 
 export default async function DashboardPage() {
   const user = await requireUser();
-  const [recent, review, progressData] = await Promise.all([
-    listRecentInsights(user.id, 4), getDailyReview(user.id), getProgress(user.id),
+  const [recent, quotes, review, progressData] = await Promise.all([
+    listRecentInsights(user.id, 4), listRotatingQuotes(user.id), getDailyReview(user.id), getProgress(user.id),
   ]);
   const levelXp = progressData.progress.totalXp % 100;
   return (
     <>
       <section className="relative mx-auto grid min-h-[295px] max-w-[1380px] grid-cols-1 items-center overflow-hidden px-4 lg:grid-cols-[1fr_minmax(540px,780px)_1fr]">
-        <aside className="hidden max-w-[200px] pl-3 font-serif text-muted lg:block"><blockquote className="text-lg italic leading-8">“A more curious you leads to a brighter tomorrow.”</blockquote><span className="my-4 block w-9 border-t border-stone-400" /><p className="text-xs tracking-[.18em]">Keep learning.</p></aside>
+        <RotatingInsightQuote quotes={quotes} />
         <div className="z-10 py-11 text-center"><p className="eyebrow">{new Intl.DateTimeFormat("en-US", { weekday: "long", month: "long", day: "numeric" }).format(new Date())}</p><h1 className="font-serif text-4xl font-medium tracking-[-.04em] md:text-5xl">What are you learning?</h1><p className="mb-7 mt-2 font-serif text-muted">Small insights compound into a wiser you.</p><OpenCaptureButton /></div>
         <BotanicalArt />
       </section>

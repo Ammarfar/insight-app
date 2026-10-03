@@ -37,6 +37,25 @@ describe.runIf(Boolean(databaseUrl))("PostgreSQL behavior", () => {
     expect(remaining).toHaveLength(0);
   });
 
+  it("returns at most twenty random quotes without crossing tenant boundaries", async () => {
+    const firstUserId = await createUser();
+    const secondUserId = await createUser();
+    const ownedRows = await database!.insert(schema.insights).values(Array.from({ length: 25 }, (_, index) => ({
+      userId: firstUserId,
+      content: `Owned quote ${index}. More detail.`,
+      nextReviewAt: new Date(),
+    }))).returning({ id: schema.insights.id });
+    await database!.insert(schema.insights).values({ userId: secondUserId, content: "Foreign quote.", nextReviewAt: new Date() });
+    const { listRotatingQuotes } = await import("../../features/insights/repository");
+
+    const quotes = await listRotatingQuotes(firstUserId);
+    const ownedIds = new Set(ownedRows.map((row) => row.id));
+    expect(quotes).toHaveLength(20);
+    expect(quotes.every((quote) => ownedIds.has(quote.id))).toBe(true);
+    expect(quotes.some((quote) => quote.text === "Foreign quote.")).toBe(false);
+    await deleteUsers(firstUserId, secondUserId);
+  });
+
   it("rejects cross-tenant connections and rewards a canonical pair only once", async () => {
     const firstUserId = await createUser();
     const secondUserId = await createUser();

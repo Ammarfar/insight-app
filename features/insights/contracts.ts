@@ -39,3 +39,9 @@ export type InsightDetail = InsightSummary & {
   reviews: Array<{ id: string; result: "REMEMBERED" | "NEEDS_REVIEW"; reviewedAt: Date }>;
   connections: Array<{ id: string; insight: InsightSummary }>;
 };
+
+export type RotatingQuote = {
+  id: string;
+  text: string;
+  attribution: string;
+};
