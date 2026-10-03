@@ -132,6 +132,11 @@ body {
   transition: background-color 180ms ease, color 180ms ease;
 }
 button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+button:not(:disabled),
+a[href]:not([aria-disabled="true"]),
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
 .font-serif { font-family: var(--font-serif), serif; }
 .eyebrow { margin: 0 0 10px; text-transform: uppercase; letter-spacing: .27em; color: var(--theme-muted); font-size: 11px; font-weight: 650; }
 .page-shell { width: min(1180px, calc(100% - 32px)); margin-inline: auto; padding-block: 58px 80px; }
