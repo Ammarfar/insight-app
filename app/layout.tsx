@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Lora } from "next/font/google";
+import { getThemeMode } from "@/features/theme/server";
 import "./globals.css";
 
 const sans = Geist({
@@ -17,9 +18,10 @@ export const metadata: Metadata = {
   description: "Capture, connect, and revisit the ideas that help you grow.",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const theme = await getThemeMode();
   return (
-    <html lang="en" className={`${sans.variable} ${serif.variable}`} suppressHydrationWarning>
+    <html lang="en" data-theme={theme} className={`${sans.variable} ${serif.variable}`} suppressHydrationWarning>
       <body>{children}</body>
     </html>
   );

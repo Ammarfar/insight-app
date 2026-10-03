@@ -20,7 +20,7 @@ export default async function InsightsPage({ searchParams }: Props) {
     <div className="page-shell">
       <header className="mb-9 flex flex-wrap items-end justify-between gap-5"><div><p className="eyebrow">Your knowledge garden</p><h1 className="font-serif text-4xl font-medium tracking-tight md:text-5xl">All Insights</h1><p className="mt-2 font-serif text-muted">{library.total} ideas captured and growing.</p></div></header>
       <form className="surface mb-7 grid gap-3 p-4 md:grid-cols-[1fr_210px_210px_auto]" method="get">
-        <label className="flex h-11 items-center gap-2 rounded-lg border border-line bg-white px-3"><Search size={17} className="text-muted" /><input className="w-full bg-transparent text-sm outline-none" name="q" defaultValue={filters.query} placeholder="Search your insights..." /></label>
+        <label className="flex h-11 items-center gap-2 rounded-lg border border-line bg-field px-3"><Search size={17} className="text-muted" /><input className="w-full bg-transparent text-sm text-ink outline-none placeholder:text-muted/75" name="q" defaultValue={filters.query} placeholder="Search your insights..." /></label>
         <Select name="topic" defaultValue={filters.topicId ?? ""}><option value="">All topics</option>{options.topics.map((topic) => <option key={topic.id} value={topic.id}>{topic.name}</option>)}</Select>
         <Select name="source" defaultValue={filters.sourceId ?? ""}><option value="">All sources</option>{options.sources.map((source) => <option key={source.id} value={source.id}>{source.title}</option>)}</Select>
         <Button>Filter</Button>

@@ -8,12 +8,12 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-ink text-white hover:bg-ink/90",
+        default: "bg-ink text-paper hover:bg-ink/90",
         sage: "bg-sage-100 text-sage-800 hover:bg-sage-200",
         violet: "bg-violet-100 text-violet-800 hover:bg-violet-200",
-        outline: "border border-line bg-white hover:bg-stone-50",
-        ghost: "hover:bg-stone-100",
-        danger: "bg-red-50 text-red-700 hover:bg-red-100",
+        outline: "border border-line bg-field hover:bg-subtle",
+        ghost: "hover:bg-subtle",
+        danger: "bg-danger-soft text-danger hover:bg-danger-soft/80",
       },
       size: { default: "h-10 px-4", sm: "h-9 px-3 text-xs", lg: "h-12 px-6", icon: "size-10" },
     },

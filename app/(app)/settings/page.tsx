@@ -46,7 +46,7 @@ export default async function SettingsPage() {
                       <div>
                         <p className="text-sm font-medium">{backup.type === "MANUAL" ? "Manual backup" : "Automatic backup"}</p>
                         <p className="mt-1 text-xs text-muted">{formatDate(backup.createdAt)} · {backup.status.toLowerCase()}{backup.sizeBytes ? ` · ${Math.ceil(backup.sizeBytes / 1024)} KB` : ""}</p>
-                        {backup.errorMessage && <p className="mt-1 text-xs text-red-600">{backup.errorMessage}</p>}
+                        {backup.errorMessage && <p className="mt-1 text-xs text-danger">{backup.errorMessage}</p>}
                       </div>
                       {backup.status === "COMPLETED" && <RestoreBackupControl backupId={backup.id} />}
                     </article>
@@ -67,7 +67,7 @@ export default async function SettingsPage() {
             <p className="my-3 text-sm leading-6 text-muted">Reviews and streaks follow your IANA timezone.</p>
             <form action={updateTimezoneAction} className="grid gap-2">
               <label htmlFor="timezone" className="text-xs font-semibold uppercase tracking-wider text-muted">Timezone</label>
-              <input id="timezone" name="timezone" required defaultValue={data.preferences?.timezone ?? "UTC"} placeholder="Asia/Jakarta" className="h-10 rounded-lg border border-line bg-white px-3 text-sm" />
+              <input id="timezone" name="timezone" required defaultValue={data.preferences?.timezone ?? "UTC"} placeholder="Asia/Jakarta" className="h-10 rounded-lg border border-line bg-field px-3 text-sm text-ink outline-none placeholder:text-muted/75 focus:border-violet-300 focus:ring-2 focus:ring-violet-100" />
               <Button size="sm" variant="outline">Save timezone</Button>
             </form>
           </section>
